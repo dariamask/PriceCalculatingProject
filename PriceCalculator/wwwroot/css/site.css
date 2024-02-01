@@ -1,0 +1,33 @@
+html {
+  font-size: 10px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 12px;
+  }
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+h1{
+    color: black;
+    font-family: 'Palatino Linotype'
+}
+x {
+    color: black;
+    font-family: 'Monotype Corsiva';
+    font-weight: 400; 
+    font-size: 15px;
+}
+a {
+    color: black;
+    font-family: 'Palatino Linotype'
+}

@@ -1,0 +1,209 @@
+﻿
+@model CalculatorModel
+
+@{
+    Layout = "_Layout";
+}
+
+
+<a class="link-success" asp-controller="Home" asp-action="Help"><i class="bi bi-calculator"></i>Узнать как пользоваться калькулятором Шринкфляции</a>
+<br />
+<br />
+
+@if (@Model.CanUseCalculator)
+{
+    <div class="row">@* строка 1 *@
+        <div class="col-sm-5">@* колонка 1 *@
+            <div class="row">@* строка 2 *@
+                <div class="col-sm-12" border="gray"> @* колонка 2 *@
+                    @* СТРОКА 1, СТОЛБЕЦ 1 - УПРАВЛЕНИЕ КАТЕГОРИЯМИ *@
+                    <form asp-controller="Home" asp-action="AddNewCategory" method="post">
+                        <div class="row"> @* строка3 *@
+                            <div class="col-sm-6">@* колонка3 *@
+                            @* ВВЕДИТЕ НАЗВАНИЕ КАТЕГОРИИ *@
+                                <div class="form-floating">
+                                    <input asp-for="CategoryName" class="form-control" autocomplete="categoryName" data-val="true" aria-required="true" required />
+                                    <label asp-for="CategoryName">Добавить новую категорию</label>
+                                    <span asp-validation-for="CategoryName" class="text-danger"></span>
+                                    <br />
+                                </div>
+                            </div> 
+                            <br />
+                            <div class="col-sm-6">@* колонка 4 *@
+                            @* ВЫБОР МЕРЫ *@
+                                <div class="form-floating">
+                                    <select class="form-select" asp-items="Model.UnitType" asp-for="SelectedUnit" id="floatingSelect" aria-label="Floating label select example"></select>
+                                    <label for="floatingSelect">Выбрать меру</label>
+                                    <br />
+                                </div>
+                            </div> 
+                            @* КНОПКА ДОБАВИТЬ КАТЕГОРИЮ *@
+                            <div class="form-floating">
+                                <button type="submit" class="w-100 btn btn-outline-success">Добавить категорию</button>
+                                <br />
+                                <hr />
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                @* СТРОКА 2, КОЛОНКА 1 - ДОБАВЛЕНИЕ НОВОГО ТОВАРА *@
+                    <form asp-controller="Home" asp-action="AddNewProduct" method="post">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                @* ВЫБОР КАТЕГОРИИ *@
+                                <div class="form-floating">
+                                    <select class="form-select" asp-items="Model.SelectListCategories" asp-for="SelectedUnit" id="floatingSelect" aria-label="Floating label select example"></select>
+                                    <label for="floatingSelect">Выбрать категорию</label>
+                                    <br />
+                                </div>
+                                @* СТОИМОСТЬ *@
+                                <div class="form-floating">
+                                    <input asp-for="ProductPrice" type="number" class="form-control" autocomplete="categoryName" aria-required="true" />
+                                    <label asp-for="ProductPrice">Стоимость</label>
+                                    <span asp-validation-for="ProductPrice" class="text-danger"></span>
+                                    <br />
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                @* НАИМЕНОВАНИЕ ТОВАРА *@
+                                <div class="form-floating">
+                                    <input asp-for="ProductName" type="text" class="form-control" autocomplete="categoryName" aria-required="true" />
+                                    <label asp-for="ProductName">Наменование товара</label>
+                                    <span asp-validation-for="ProductName" class="text-danger"></span>
+                                </div>
+                                <br />
+                                @* КОЛИЧЕСТВО *@
+                                <div class="form-floating">
+                                    <input asp-for="ProductQuantity" type="number" class="form-control" autocomplete="categoryName" aria-required="true" />
+                                    @* <textarea class="form-control" id="validationTextarea" asp-for="ProductQuantity" placeholder="Required example textarea" required></textarea> *@
+                                    <label asp-for="ProductQuantity">Количество - гр./мл./шт.</label>
+                                    <span asp-validation-for="ProductQuantity" class="text-danger"></span>
+                                    <div class="invalid-feedback">
+                                        Please enter a message in the textarea.
+                                    </div>
+                                </div>
+                                <br />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                @* ПРИМЕЧАНИЕ *@
+                                <div class="form-floating">
+                                    <input asp-for="ProductNote" type="" class="form-control" autocomplete="categoryName" aria-required="true" />
+                                    <label asp-for="ProductNote">Примечание</label>
+                                    <span asp-validation-for="ProductNote" class="text-danger"></span>
+                                    <br />
+                                </div>
+                                <br />
+                            </div>
+                            <div class="col-sm-6">
+                            @* КНОПКА ДОБАВЛЕНИЯ ТОВАРА*@
+                                <div>
+                                    <button type="submit" class="w-100 btn btn-outline-success">Добавить товар в расчёт</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>            
+        </div>   
+        <div class="col-sm-7">
+            <div class="row">
+                <div class="col-sm-12">
+                    <form asp-controller="Home" asp-action="SwitchModeBestPrice" method="post">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" asp-for="IsBestPriceLightning" type="checkbox" role="switch" id="flexSwitchCheckChecked">
+                                    <label class="form-check-label" for="flexSwitchCheckChecked">Выделить самый выгодный вариант</label>
+                                    <br />
+                                    <br />
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <button type="submit" class="btn btn-outline-success">Обновить таблицу</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <table class="table table-striped table-bordered">
+                        <tbody>
+                            @foreach (var category in Model.ProductsForTable)
+                            {
+                                <tr>
+                                    <td colspan="5" scope="row">@category.Name</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="5">
+                                        <table class="table mb-0">
+                                            <thead>
+                                                @if (@category.CategoryUnitType == "1 штука")
+                                                {
+                                                    category.CategoryUnitType = "1 штуку";
+                                                }
+                                                <tr>
+                                                    <th scope="col">#</th>
+                                                    <th scope="col">Название</th>
+                                                    <th scope="col">Стоимость за @category.CategoryUnitType</th>
+                                                    <th scope="col">Данные для расчёта</th>
+                                                    <th scope="col">Примечание</th>
+                                                    <th scope="col">Удалить</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var products in category.Products)
+                                                {
+                                                    @if (products.IsBestPrice && Model.IsBestPriceLightning)
+                                                    {
+                                                        <tr class="table-success">
+                                                            <th scope="row">1</th>
+                                                            <td>@products.Name</td>
+                                                            <td align="center"><b>@products.OneUnitPrice</b></td>
+                                                            <td>@products.Quantity за @products.Price. руб.</td>
+                                                            <td>@products.Note</td>
+                                                            <td>
+                                                                <p>
+                                                                   @Html.ActionLink("Удалить", "FillTheTable", "Home", new { id = products.Id }, null)
+                                                                </p> 
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                    else
+                                                    {
+                                                        <tr>
+                                                            <th scope="row">1</th>
+                                                            <td>@products.Name</td>
+                                                            <td align="center"><b>@products.OneUnitPrice</b></td>
+                                                            <td>@products.Quantity за @products.Price. руб.</td>
+                                                            <td>@products.Note</td>
+                                                            <td>
+                                                                <p>
+                                                                   @Html.ActionLink("Удалить", "FillTheTable", "Home", new { id = products.Id }, null)
+                                                                </p>
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                            }
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+else
+{
+    <p>К сожалению, в настоящее время использование калькулятора доступно только для зарегистрированных пользователей</p>
+    <p>В необозримом будущем такая возможность будет реализована и для пользователей без регистрации.</p>
+}

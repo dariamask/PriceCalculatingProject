@@ -1,0 +1,20 @@
+﻿@inject SignInManager<ApplicationUser> SignInManager
+@{
+    var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();
+}
+
+<style>
+  li {margin-bottom: 1em;}
+</style>
+
+<ul class="nav nav-pills flex-column">
+    <li class="nav-item"><a class="w-100 btn btn-outline-success @ManageNavPages.IndexNavClass(ViewContext)" id="profile" asp-page="./Index">Профиль</a></li>
+    <li class="nav-item"><a class="w-100 btn btn-outline-success @ManageNavPages.EmailNavClass(ViewContext)" id="email" asp-page="./Email">E-mail</a></li>
+    <li class="nav-item"><a class="w-100 btn btn-outline-success @ManageNavPages.ChangePasswordNavClass(ViewContext)" id="change-password" asp-page="./ChangePassword">Пароль</a></li>
+    @if (hasExternalLogins)
+    {
+        <li id="external-logins" class="w-100 btn btn-outline-success"><a id="external-login" class="nav-link @ManageNavPages.ExternalLoginsNavClass(ViewContext)" asp-page="./ExternalLogins">External logins</a></li>
+    }
+    <li class="nav-item"><a class="w-100 btn btn-outline-success @ManageNavPages.TwoFactorAuthenticationNavClass(ViewContext)" id="two-factor" asp-page="./TwoFactorAuthentication">Двухфакторная аутентифкация</a></li>
+    <li class="nav-item"><a class="w-100 btn btn-outline-success @ManageNavPages.PersonalDataNavClass(ViewContext)" id="personal-data" asp-page="./PersonalData">Хранение персональных данных</a></li>   
+</ul>
