@@ -6,7 +6,7 @@ namespace PriceCalculator.Areas.Identity.Data
     {
         public int ID { get; set; }
         public string Name { get; set; }      
-        [NotMapped]public List<string> UnitTypes { get; set; } = new List<string>
+        [NotMapped]public List<string> UnitTypesList { get; set; } = new List<string>
         {
             "1 килограмм",
             "1 литр",
