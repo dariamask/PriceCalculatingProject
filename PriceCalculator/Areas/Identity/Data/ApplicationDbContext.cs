@@ -21,7 +21,10 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
+        builder.Entity<Product>().Ignore(t => t.IsBestPrice);
         builder.Entity<UnitType>().Ignore(t => t.UnitTypesList);
+        builder.Entity<UnitType>().HasMany(q => q.Products).WithOne(k => k.UnitType).OnDelete(DeleteBehavior.Restrict);
+
         base.OnModelCreating(builder);        
     }
 }

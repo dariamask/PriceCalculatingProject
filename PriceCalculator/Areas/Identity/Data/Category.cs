@@ -1,4 +1,6 @@
-﻿namespace PriceCalculatingProject.Areas.Identity.Data
+﻿using PriceCalculator.Areas.Identity.Data;
+
+namespace PriceCalculatingProject.Areas.Identity.Data
 {
     public class Category
     {
@@ -10,5 +12,7 @@
         public List<Product>? Products { get; set; }
         public DateTime? CreatedDate { get; set; }
         public string? CategoryUnitType { get; set; }
+        public UnitType? UnitType { get; set; }
+        public int UnitTypeID { get; set; }
     }
 }

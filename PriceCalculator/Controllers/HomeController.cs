@@ -107,7 +107,7 @@ namespace PriceCalculatingProject.Controllers
                 ApplicationUser = await _context.Users.SingleAsync(K => K.Id == userId),
                 OneUnitPrice = GetProductPrice(model),
                 Note = model.ProductNote,
-                UnitType = model.Categories[indexOfSelectedCategory].CategoryUnitType
+                UnitTypeOld = model.Categories[indexOfSelectedCategory].CategoryUnitType
             };
 
             _context.Products.Add(newProduct);
