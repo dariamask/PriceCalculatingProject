@@ -237,5 +237,19 @@ namespace PriceCalculatingProject.Controllers
 
             return unit;      
         }
+
+        
+        public IActionResult DeleteProduct(int id)
+        {
+            var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var deletedProduct = _context.Products.Find(id);
+
+            deletedProduct.IsDelited = true;
+
+            _context.SaveChanges();          
+
+            return RedirectToAction("Index");
+        }
     }
 }
