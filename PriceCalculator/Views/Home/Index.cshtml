@@ -143,14 +143,14 @@
                                     <td colspan="5">
                                         <table class="table mb-0">
                                             <thead>
-                                                @if (@category.CategoryUnitType == "1 штука")
+                                                @if (@category.UnitType.Name == "1 штука")
                                                 {
-                                                    category.CategoryUnitType = "1 штуку";
+                                                    category.UnitType.Name = "1 штуку";
                                                 }
                                                 <tr>
                                                     <th scope="col">#</th>
                                                     <th scope="col">Название</th>
-                                                    <th scope="col">Стоимость за @category.CategoryUnitType</th>
+                                                    <th scope="col">Стоимость за @category.UnitType.Name</th>
                                                     <th scope="col">Данные для расчёта</th>
                                                     <th scope="col">Примечание</th>
                                                     <th scope="col">Удалить</th>

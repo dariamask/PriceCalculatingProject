@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using PriceCalculatingProject.Areas.Identity.Data;
 using PriceCalculatingProject.Models;
+using PriceCalculator.Areas.Identity.Data;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -23,6 +25,19 @@ namespace PriceCalculatingProject.Controllers
         public async Task<ActionResult> Index()
         {
             var model = new CalculatorModel();
+
+            if (_context.UnitTypes.ToList().Count < model.UnitType.Count) 
+            { 
+                foreach(var units in model.UnitType)
+                {
+                    var newUnit = new UnitType
+                    {
+                        Name = units.Text
+                    };
+                    _context.UnitTypes.Add(newUnit);
+                    _context.SaveChanges();
+                }
+            }        
 
             model.IsBestPriceLightning = Convert.ToBoolean(HttpContext.Session.GetString(SessionCheckFiltration));
 
@@ -67,6 +82,11 @@ namespace PriceCalculatingProject.Controllers
 
             var dbUser = await _context.Users.SingleAsync(K => K.Id == userId);
 
+            var unitTypeValue = model.UnitType
+                                      .Where(p => p.Value == model.SelectedUnit)
+                                      .First()
+                                      .Text;
+           
             var category = new Category
             {
                 Name = model.CategoryName,
@@ -74,10 +94,7 @@ namespace PriceCalculatingProject.Controllers
                 ApplicationUser = dbUser,
                 ApplicationUserID = dbUser.Id,
                 CreatedDate = DateTime.Now,
-                CategoryUnitType = model.UnitType
-                                      .Where(p => p.Value == model.SelectedUnit)
-                                      .First()
-                                      .Text
+                UnitType = GetUnit(_context, model),
             };
 
             _context.Categories.Add(category);
@@ -107,7 +124,7 @@ namespace PriceCalculatingProject.Controllers
                 ApplicationUser = await _context.Users.SingleAsync(K => K.Id == userId),
                 OneUnitPrice = GetProductPrice(model),
                 Note = model.ProductNote,
-                UnitTypeOld = model.Categories[indexOfSelectedCategory].CategoryUnitType
+                UnitTypeID = model.Categories[indexOfSelectedCategory].UnitTypeID
             };
 
             _context.Products.Add(newProduct);
@@ -117,13 +134,12 @@ namespace PriceCalculatingProject.Controllers
         }
 
         public static decimal GetProductPrice(CalculatorModel product)
-        {
-            decimal OneUnitPrice = 0;
-            OneUnitPrice = product.Categories[int.Parse(product.SelectedUnit)].CategoryUnitType switch
+        {         
+            var OneUnitPrice = product.Categories[int.Parse(product.SelectedUnit)].UnitTypeID switch
             {
-                "100 грамм" or "100 миллилитров" => product.ProductPrice * 100 / product.ProductQuantity,
-                "1 килограмм" or "1 литр" => product.ProductPrice * 1000 / product.ProductQuantity,
-                "1 штука" => product.ProductPrice * 1 / product.ProductQuantity,
+                2 or 4 => product.ProductPrice * 100 / product.ProductQuantity,
+                1 or 3 => product.ProductPrice * 1000 / product.ProductQuantity,
+                5 => product.ProductPrice * 1 / product.ProductQuantity,
                 _ => 0
             };
 
@@ -202,12 +218,24 @@ namespace PriceCalculatingProject.Controllers
                 var newSelectItem = new SelectListItem
                 {
                     Value = i.ToString(),
-                    Text = $"{model.Categories[i].Name} - {model.Categories[i].CategoryUnitType}"
+                    Text = $"{model.Categories[i].Name} - {model.Categories[i].UnitType.Name}"
                 };
                 selectList.Add(newSelectItem);
             }
 
             return selectList;
+        }
+
+        private static UnitType GetUnit (ApplicationDbContext dbContext, CalculatorModel model)
+        {
+            var unitText = model.UnitType
+                          .Where(p => p.Value == model.SelectedUnit)
+                          .First()
+                          .Text;
+            var unit = dbContext.UnitTypes.Single(u => u.Name == unitText);
+
+
+            return unit;      
         }
     }
 }

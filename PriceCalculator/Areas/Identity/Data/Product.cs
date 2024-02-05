@@ -11,7 +11,6 @@ namespace PriceCalculatingProject.Areas.Identity.Data
         public decimal OneUnitPrice { get; set; }
         public bool IsBestPrice { get; set; }
         public decimal? Quantity { get; set; }
-        public string? UnitTypeOld { get; set; }
         public Category? Category { get; set; }
         public int CategoryID { get; set; }
         public string? Note { get; set; }
