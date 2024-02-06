@@ -4,6 +4,7 @@ using System.Drawing.Design;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
+using PriceCalculator.Data;
 
 namespace PriceCalculatingProject.Areas.Identity.Data;
 

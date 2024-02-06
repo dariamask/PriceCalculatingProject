@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
 using PriceCalculatingProject.Areas.Identity.Data;
-
+using PriceCalculator.Data;
 
 namespace PriceCalculatingProject.Models
 {

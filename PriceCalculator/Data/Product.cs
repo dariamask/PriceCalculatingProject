@@ -1,6 +1,6 @@
-﻿using PriceCalculator.Areas.Identity.Data;
+﻿using PriceCalculatingProject.Areas.Identity.Data;
 
-namespace PriceCalculatingProject.Areas.Identity.Data
+namespace PriceCalculator.Data
 {
     public class Product
     {
@@ -17,6 +17,6 @@ namespace PriceCalculatingProject.Areas.Identity.Data
         public ApplicationUser? ApplicationUser { get; set; }
         public string? ApplicationUserID { get; set; }
         public UnitType? UnitType { get; set; }
-        public int UnitTypeID {  get; set; }
+        public int UnitTypeID { get; set; }
     }
 }

@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using PriceCalculatingProject.Areas.Identity.Data;
+using PriceCalculator.Data;
+
 namespace PriceCalculatingProject
 {
     public class Program

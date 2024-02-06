@@ -2,10 +2,9 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using PriceCalculatingProject.Areas.Identity.Data;
-using PriceCalculator.Areas.Identity.Data;
 using System.Reflection.Emit;
 
-namespace PriceCalculatingProject.Areas.Identity.Data;
+namespace PriceCalculator.Data;
 
 public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 {
@@ -25,6 +24,6 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
         builder.Entity<UnitType>().Ignore(t => t.UnitTypesList);
         builder.Entity<UnitType>().HasMany(q => q.Products).WithOne(k => k.UnitType).OnDelete(DeleteBehavior.Restrict);
 
-        base.OnModelCreating(builder);        
+        base.OnModelCreating(builder);
     }
 }

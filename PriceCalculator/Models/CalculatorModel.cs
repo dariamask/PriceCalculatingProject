@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
-using PriceCalculatingProject.Areas.Identity.Data;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
+using PriceCalculator.Data;
 
 namespace PriceCalculatingProject.Models
 {

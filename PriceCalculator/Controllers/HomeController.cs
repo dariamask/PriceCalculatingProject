@@ -2,9 +2,8 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using PriceCalculatingProject.Areas.Identity.Data;
 using PriceCalculatingProject.Models;
-using PriceCalculator.Areas.Identity.Data;
+using PriceCalculator.Data;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

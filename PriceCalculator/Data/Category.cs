@@ -1,6 +1,6 @@
-﻿using PriceCalculator.Areas.Identity.Data;
+﻿using PriceCalculatingProject.Areas.Identity.Data;
 
-namespace PriceCalculatingProject.Areas.Identity.Data
+namespace PriceCalculator.Data
 {
     public class Category
     {
