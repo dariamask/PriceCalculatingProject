@@ -38,7 +38,7 @@ namespace PriceCalculatingProject.Controllers
                         Name = units.Text
                     };
                     _context.UnitTypes.Add(newUnit);
-                    _context.SaveChanges();
+                    await _context.SaveChangesAsync();
                 }
             }        
 
@@ -143,15 +143,15 @@ namespace PriceCalculatingProject.Controllers
             return RedirectToAction("Index");
         }
 
-        public IActionResult DeleteProduct(int id)
+        public async Task<IActionResult> DeleteProduct(int id)
         {
             var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            var deletedProduct = _context.Products.Find(id);
+            var deletedProduct = await _context.Products.FindAsync(id);
 
             deletedProduct.IsDelited = true;
 
-            _context.SaveChanges();          
+            await _context.SaveChangesAsync();          
 
             return RedirectToAction("Index");
         }
