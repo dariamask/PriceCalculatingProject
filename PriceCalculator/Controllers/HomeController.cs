@@ -29,8 +29,6 @@ namespace PriceCalculatingProject.Controllers
         {
             var model = new CalculatorModel();
 
-            _services.someNumber = 4;
-
             if (_context.UnitTypes.ToList().Count < model.UnitType.Count) 
             { 
                 foreach(var units in model.UnitType)

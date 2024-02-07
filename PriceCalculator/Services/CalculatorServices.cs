@@ -8,8 +8,6 @@ namespace PriceCalculator.Services
 {
     public class CalculatorServices
     {
-
-        public int someNumber {  get; set; }
         public decimal GetProductPrice(CalculatorModel product)
         {
             var OneUnitPrice = product.Categories[int.Parse(product.SelectedUnit)].UnitTypeID switch
