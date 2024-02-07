@@ -4,10 +4,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using PriceCalculatingProject.Models;
 using PriceCalculator.Data;
+using PriceCalculator.Services;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Security.Claims;
+using PriceCalculator.Services;
 
 namespace PriceCalculatingProject.Controllers
 {
@@ -15,15 +17,19 @@ namespace PriceCalculatingProject.Controllers
     {
         private const string SessionCheckFiltration = "_Lightning";      
         private readonly ApplicationDbContext _context;
-        public HomeController(ApplicationDbContext context)
+        private readonly CalculatorServices _services;
+        public HomeController(ApplicationDbContext context, CalculatorServices services)
         {
             _context = context;
+            _services = services;
         }
-
+        
         [HttpGet]
         public async Task<ActionResult> Index()
         {
             var model = new CalculatorModel();
+
+            _services.someNumber = 4;
 
             if (_context.UnitTypes.ToList().Count < model.UnitType.Count) 
             { 
@@ -40,15 +46,15 @@ namespace PriceCalculatingProject.Controllers
 
             model.IsBestPriceLightning = Convert.ToBoolean(HttpContext.Session.GetString(SessionCheckFiltration));
 
-            var userId = GetUserID(HttpContext);
+            var userId = _services.GetUserID(HttpContext);
 
-            model.CanUseCalculator = DoesUserHaveAccessToUseCalculator(userId);
+            model.CanUseCalculator = _services.DoesUserHaveAccessToUseCalculator(userId);
 
-            model.Categories = await GetCategoriesAsync(_context, userId, model);
+            model.Categories = await _services.GetCategoriesAsync(_context, userId, model);
 
-            model.ProductsForTable = CreateListForCalculateTable(model);
+            model.ProductsForTable = _services.CreateListForCalculateTable(model);
 
-            model.SelectListCategories = CreateSelectListItem(model);
+            model.SelectListCategories = _services.CreateSelectListItem(model);
             
             return View(model);
         }
@@ -77,7 +83,7 @@ namespace PriceCalculatingProject.Controllers
         [HttpPost]
         public async Task<IActionResult> AddNewCategory(CalculatorModel model)
         {
-            var userId = GetUserID(HttpContext);
+            var userId = _services.GetUserID(HttpContext);
 
             var dbUser = await _context.Users.SingleAsync(K => K.Id == userId);
 
@@ -93,7 +99,7 @@ namespace PriceCalculatingProject.Controllers
                 ApplicationUser = dbUser,
                 ApplicationUserID = dbUser.Id,
                 CreatedDate = DateTime.Now,
-                UnitType = GetUnit(_context, model),
+                UnitType = _services.GetUnit(_context, model),
             };
 
             _context.Categories.Add(category);
@@ -105,9 +111,9 @@ namespace PriceCalculatingProject.Controllers
         [HttpPost]
         public async Task<IActionResult> AddNewProduct(CalculatorModel model)
         {
-            var userId = GetUserID(HttpContext);
+            var userId = _services.GetUserID(HttpContext);
 
-            model.Categories = await GetCategoriesAsync(_context, userId, model);
+            model.Categories = await _services.GetCategoriesAsync(_context, userId, model);
 
             var indexOfSelectedCategory = int.Parse(model.SelectedUnit);
 
@@ -121,7 +127,7 @@ namespace PriceCalculatingProject.Controllers
                 CategoryID = model.Categories[indexOfSelectedCategory].Id,
                 ApplicationUserID = userId,
                 ApplicationUser = await _context.Users.SingleAsync(K => K.Id == userId),
-                OneUnitPrice = GetProductPrice(model),
+                OneUnitPrice = _services.GetProductPrice(model),
                 Note = model.ProductNote,
                 UnitTypeID = model.Categories[indexOfSelectedCategory].UnitTypeID
             };
@@ -132,19 +138,6 @@ namespace PriceCalculatingProject.Controllers
             return RedirectToAction("Index");
         }
 
-        public static decimal GetProductPrice(CalculatorModel product)
-        {         
-            var OneUnitPrice = product.Categories[int.Parse(product.SelectedUnit)].UnitTypeID switch
-            {
-                2 or 4 => product.ProductPrice * 100 / product.ProductQuantity,
-                1 or 3 => product.ProductPrice * 1000 / product.ProductQuantity,
-                5 => product.ProductPrice * 1 / product.ProductQuantity,
-                _ => 0
-            };
-
-            return OneUnitPrice;
-        }
-
         public IActionResult SwitchModeBestPrice(CalculatorModel model)
         {
             HttpContext.Session.SetString(SessionCheckFiltration, model.IsBestPriceLightning.ToString());
@@ -152,92 +145,6 @@ namespace PriceCalculatingProject.Controllers
             return RedirectToAction("Index");
         }
 
-        private static string GetUserID(HttpContext httpContext)
-        {
-            if (httpContext.User.Identity.IsAuthenticated)
-            {
-                return httpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            }
-
-            return null;
-        }
-
-        private static bool DoesUserHaveAccessToUseCalculator(string userID)
-        {
-            if (userID == null)
-            {
-                return false;
-            }
-            else
-            {
-                return true;
-            }            
-        }
-
-        private static async Task<List<Category>> GetCategoriesAsync(ApplicationDbContext context, string userID, CalculatorModel model)
-        {
-            var categories = await context.Categories
-                .Where(x => x.ApplicationUserID == userID && !x.IsDelited)
-                .Include(x => x.Products.Where(p => !p.IsDelited))
-                .OrderByDescending(x => x.CreatedDate)
-                .ToListAsync();
-
-            UpdateProductsForBestPrice(categories);
-
-            return categories;
-        }
-
-        private static void UpdateProductsForBestPrice(List<Category> categories)
-        {
-            foreach (var category in categories)
-            {
-                if (category.Products.Count > 0)
-                {
-                    decimal lowestPrice = category.Products.Min(bestPrice => bestPrice.OneUnitPrice);
-
-                    foreach (var product in category.Products)
-                    {
-                        product.IsBestPrice = product.OneUnitPrice == lowestPrice;
-                    }
-                }
-            }
-        }
-
-        private static List<Category> CreateListForCalculateTable(CalculatorModel model)
-        {
-            return model.Categories.Where(x => x.Products.Count > 0).ToList();
-        }
-
-        private static List<SelectListItem> CreateSelectListItem(CalculatorModel model)
-        {
-            List<SelectListItem>? selectList = new List<SelectListItem>();
-
-            for (int i = 0; i < model.Categories.Count; i++)
-            {
-                var newSelectItem = new SelectListItem
-                {
-                    Value = i.ToString(),
-                    Text = $"{model.Categories[i].Name} - {model.Categories[i].UnitType.Name}"
-                };
-                selectList.Add(newSelectItem);
-            }
-
-            return selectList;
-        }
-
-        private static UnitType GetUnit (ApplicationDbContext dbContext, CalculatorModel model)
-        {
-            var unitText = model.UnitType
-                          .Where(p => p.Value == model.SelectedUnit)
-                          .First()
-                          .Text;
-            var unit = dbContext.UnitTypes.Single(u => u.Name == unitText);
-
-
-            return unit;      
-        }
-
-        
         public IActionResult DeleteProduct(int id)
         {
             var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using PriceCalculatingProject.Areas.Identity.Data;
 using PriceCalculator.Data;
+using PriceCalculator.Services;
 
 namespace PriceCalculatingProject
 {
@@ -26,6 +27,8 @@ namespace PriceCalculatingProject
                 options.Cookie.HttpOnly = true;
                 options.Cookie.IsEssential = true;
             });
+
+            builder.Services.AddScoped<CalculatorServices>();
 
             var app = builder.Build();
 
